@@ -1,0 +1,16 @@
+[package]
+name = "writing_stats_server"
+version = "0.1.0"
+authors = ["Simon Struck <simon@simonscode.org>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rocket = "0.4.2"
+rusqlite = "0.16"
+lettre = "0.9"
+lettre_email = "0.9"
+
+[dependencies.rocket_contrib]
+features = ["tera_templates"]
