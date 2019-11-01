@@ -16,16 +16,17 @@ CREATE TABLE LoginCookies
     user_id         INTEGER,
     expiration_date INTEGER NOT NULL,
     token_value     TEXT    NOT NULL,
-    FOREIGN KEY(user_id) REFERENCES User(id)
+    FOREIGN KEY (user_id) REFERENCES User (id)
 );
 
 CREATE TABLE Story
 (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    name          TEXT NOT NULL,
     user_id       INTEGER,
     creation_date TEXT NOT NULL,
     upload_url    TEXT NOT NULL,
-    FOREIGN KEY(user_id) REFERENCES User(id)
+    FOREIGN KEY (user_id) REFERENCES User (id)
 );
 
 CREATE TABLE Wordcount
@@ -33,7 +34,8 @@ CREATE TABLE Wordcount
     story_id INTEGER,
     date     TEXT    NOT NULL,
     count    INTEGER NOT NULL,
-    FOREIGN KEY(story_id) REFERENCES Story(id)
+    FOREIGN KEY (story_id) REFERENCES Story (id)
 );
 
-insert into User (username, email) VALUES ('simon','simon@simonscode.org');
+insert into User (username, email)
+VALUES ('simon', 'simon@simonscode.org');

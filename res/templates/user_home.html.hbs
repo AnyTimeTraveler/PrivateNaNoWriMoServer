@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    <title>{{ username }}'s Home</title>
+</head>
+<body>
+<h1>User Home</h1>
+<p>Debug: Logged in with user ID {{ user_id }}.</p>
+<form action="/logout" method="post" accept-charset="utf-8">
+    <input type="submit" name="logout" id="logout" value="logout"/>
+</form>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Creation Date</th>
+        <th>Current Wordcount</th>
+    </tr>
+    {% if stories %}
+    {% for story in stories %}
+    <tr>
+        <td><a href="/story/{{ story.id }}">{{ story.name }}</a></td>
+        <td>{{ story.creation_date }}</td>
+        <td>
+            <form action="/story/{{ story.id }}/update" method="post" accept-charset="utf-8">
+                <input type="number" name="wordcount" value="{{ story.wordcount }}">
+                <input type="submit" value="update"/>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr>
+        <td colspan="3">No stories, yet.</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td colspan="3">
+            <form action="/story/{{ story.id }}/update" method="post" accept-charset="utf-8">
+                <input type="text" name="name">
+                <input type="submit" value="Add a Story"/>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

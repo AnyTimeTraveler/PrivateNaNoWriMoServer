@@ -1,44 +1,49 @@
-#![feature(proc_macro_hygiene, decl_macro, type_ascription)]
+#![feature(proc_macro_hygiene, decl_macro, type_ascription, never_type)]
 
 #[macro_use] extern crate rocket;
+extern crate rocket_contrib;
+#[macro_use] extern crate serde_derive;
+extern crate serde_json;
 extern crate rusqlite;
 
+mod pages;
 
 use std::sync::Mutex;
-use rocket::{Rocket, State};
-use rusqlite::{Connection, Error};
+use rocket::Rocket;
+use rusqlite::Connection;
 use std::fs::File;
 use std::io::Read;
 
 type DbConn = Mutex<Connection>;
 
-fn init_database(conn: &Connection) {
+fn reset_database(conn: &Connection) {
     let mut sql_init = File::open("res/init.sql").expect("opening sql init file");
     let mut sql = String::new();
     sql_init.read_to_string(&mut sql).expect("reading sql init file");
     conn.execute_batch(&*sql).expect("create entries table");
 }
 
-#[get("/")]
-fn hello(db_conn: State<DbConn>) -> Result<String, Error>  {
-    db_conn.lock()
-        .expect("db connection lock")
-        .query_row("SELECT username FROM User",
-                   &[]: &[&str;0],
-                   |row| { row.get(0) })
-}
-
 fn rocket() -> Rocket {
-    // Open a new in-memory SQLite database.
     let conn = Connection::open("database.sqlite").expect("in memory db");
 
-    // Initialize the `entries` table in the in-memory database.
-    init_database(&conn);
+    // Only while testing
+    reset_database(&conn);
 
-    // Have Rocket manage the database pool.
     rocket::ignite()
         .manage(Mutex::new(conn))
-        .mount("/", routes![hello])
+        .mount("/", routes![
+            pages::misc::index,
+            pages::misc::user_index,
+            pages::login::login,
+            pages::login::logout,
+            pages::login::login_user,
+            pages::login::login_page,
+            pages::user::user,
+            pages::story::create_story,
+            pages::story::story,
+            pages::story::update_wordcount
+        ])
+        .register(catchers![pages::misc::not_found])
 }
 
 fn main() {
